@@ -1,18 +1,14 @@
 package Controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.image.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 
 import java.io.File;
 
-public class HelloController {
+public class MainController {
     private Image image = null;
     private Image blackAndWhite = null;
     FileChooser fileChooser = new FileChooser();
@@ -21,11 +17,29 @@ public class HelloController {
     @FXML
     ImageView blackAndWhiteImageView = new ImageView();
     @FXML
-    Slider greenIntensitySlider = new Slider();
-    @FXML
     Slider redIntensitySlider = new Slider();
     @FXML
+    Slider greenIntensitySlider = new Slider();
+    @FXML
     Slider blueIntensitySlider = new Slider();
+
+    @FXML
+    public void initialize() {
+        redIntensitySlider.valueChangingProperty().addListener((obs, oldVal, newVal) -> {
+            blackAndWhite = detectColour(redIntensitySlider,greenIntensitySlider,blueIntensitySlider);
+            blackAndWhiteImageView.setImage(blackAndWhite);
+        });
+        greenIntensitySlider.valueChangingProperty().addListener((obs, oldVal, newVal) -> {
+            blackAndWhite = detectColour(redIntensitySlider,greenIntensitySlider,blueIntensitySlider);
+            blackAndWhiteImageView.setImage(blackAndWhite);
+        });
+        blueIntensitySlider.valueChangingProperty().addListener((obs, oldVal, newVal) -> {
+            blackAndWhite = detectColour(redIntensitySlider,greenIntensitySlider,blueIntensitySlider);
+            blackAndWhiteImageView.setImage(blackAndWhite);
+        });
+
+
+    }
 
 
     @FXML
