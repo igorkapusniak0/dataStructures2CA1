@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Slider;
 import javafx.scene.image.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -19,6 +20,13 @@ public class HelloController {
     ImageView originalImageView = new ImageView();
     @FXML
     ImageView blackAndWhiteImageView = new ImageView();
+    @FXML
+    Slider greenIntensitySlider = new Slider();
+    @FXML
+    Slider redIntensitySlider = new Slider();
+    @FXML
+    Slider blueIntensitySlider = new Slider();
+
 
     @FXML
     protected void openImage() {
@@ -39,8 +47,7 @@ public class HelloController {
     protected void nextImage(){
         originalImageView.setOpacity(0);
         blackAndWhiteImageView.setOpacity(1);
-        detectColour();
-        blackAndWhite = detectColour();
+        blackAndWhite = detectColour(redIntensitySlider,greenIntensitySlider,blueIntensitySlider);
         blackAndWhiteImageView.setImage(blackAndWhite);
     }
     @FXML
@@ -49,10 +56,14 @@ public class HelloController {
         blackAndWhiteImageView.setOpacity(0);
     }
 
-    private Image detectColour(){
+    private Image detectColour(Slider redIntensitySlider, Slider greenIntensitySlider, Slider blueIntensitySlider){
         if (image != null){
             int height = (int) image.getHeight();
             int width = (int) image.getWidth();
+
+            double redIntensity = redIntensitySlider.getValue();
+            double greenIntensity = greenIntensitySlider.getValue();
+            double blueIntensity = blueIntensitySlider.getValue();
 
             WritableImage writableImage = new WritableImage(width,height);
             PixelReader pixelReader = image.getPixelReader();
@@ -63,7 +74,7 @@ public class HelloController {
                     Color colour = pixelReader.getColor(x,y);
 
 
-                    if (colour.getGreen()>.8){
+                    if (colour.getRed()>redIntensity && colour.getGreen()>greenIntensity && colour.getBlue()>blueIntensity){
                         pixelWriter.setColor(x,y,Color.rgb(255,255,255));
                     }else{
                         pixelWriter.setColor(x,y,Color.rgb(0,0,0));
@@ -73,7 +84,6 @@ public class HelloController {
             return writableImage;
         }
         else {
-            System.out.println("lol broke");
             return null;
         }
     }
