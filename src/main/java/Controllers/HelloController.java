@@ -63,7 +63,7 @@ public class HelloController {
                     Color colour = pixelReader.getColor(x,y);
 
 
-                    if (colour.getGreen()>.3){
+                    if (colour.getGreen()>.8){
                         pixelWriter.setColor(x,y,Color.rgb(255,255,255));
                     }else{
                         pixelWriter.setColor(x,y,Color.rgb(0,0,0));
