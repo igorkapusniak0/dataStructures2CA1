@@ -1,5 +1,6 @@
 package Controllers;
 
+import API.API;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import javafx.scene.image.*;
@@ -24,22 +25,20 @@ public class MainController {
     @FXML
     public void initialize() {
         redIntensitySlider.valueChangingProperty().addListener((obs, oldVal, newVal) -> {
-            blackAndWhite = detectColour(redIntensitySlider,greenIntensitySlider,blueIntensitySlider);
+            blackAndWhite = API.detectColour(image, redIntensitySlider,greenIntensitySlider,blueIntensitySlider);
             blackAndWhiteImageView.setImage(blackAndWhite);
         });
         greenIntensitySlider.valueChangingProperty().addListener((obs, oldVal, newVal) -> {
-            blackAndWhite = detectColour(redIntensitySlider,greenIntensitySlider,blueIntensitySlider);
+            blackAndWhite = API.detectColour(image, redIntensitySlider,greenIntensitySlider,blueIntensitySlider);
             blackAndWhiteImageView.setImage(blackAndWhite);
         });
         blueIntensitySlider.valueChangingProperty().addListener((obs, oldVal, newVal) -> {
-            blackAndWhite = detectColour(redIntensitySlider,greenIntensitySlider,blueIntensitySlider);
+            blackAndWhite = API.detectColour(image,redIntensitySlider,greenIntensitySlider,blueIntensitySlider);
             blackAndWhiteImageView.setImage(blackAndWhite);
         });
 
 
     }
-
-
 
     @FXML
     protected void openImage() {
@@ -61,8 +60,9 @@ public class MainController {
     protected void nextImage(){
         originalImageView.setOpacity(0);
         blackAndWhiteImageView.setOpacity(1);
-        blackAndWhite = detectColour(redIntensitySlider,greenIntensitySlider,blueIntensitySlider);
+        blackAndWhite = API.detectColour(image, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
         blackAndWhiteImageView.setImage(blackAndWhite);
+        API.unionFind(blackAndWhite);
     }
     @FXML
     protected void previousImage(){
@@ -70,37 +70,7 @@ public class MainController {
         blackAndWhiteImageView.setOpacity(0);
     }
 
-    private Image detectColour(Slider redIntensitySlider, Slider greenIntensitySlider, Slider blueIntensitySlider){
-        if (image != null){
-            int height = (int) image.getHeight();
-            int width = (int) image.getWidth();
 
-            double redIntensity = redIntensitySlider.getValue();
-            double greenIntensity = greenIntensitySlider.getValue();
-            double blueIntensity = blueIntensitySlider.getValue();
-
-            WritableImage writableImage = new WritableImage(width,height);
-            PixelReader pixelReader = image.getPixelReader();
-            PixelWriter pixelWriter = writableImage.getPixelWriter();
-
-            for (int x = 0; x<width; x++){
-                for (int y = 0; y<height; y++){
-                    Color colour = pixelReader.getColor(x,y);
-
-
-                    if (colour.getRed()>redIntensity && colour.getGreen()>greenIntensity && colour.getBlue()>blueIntensity){
-                        pixelWriter.setColor(x,y,Color.rgb(255,255,255));
-                    }else{
-                        pixelWriter.setColor(x,y,Color.rgb(0,0,0));
-                    }
-                }
-            }
-            return writableImage;
-        }
-        else {
-            return null;
-        }
-    }
 
 
 
