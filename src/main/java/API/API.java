@@ -1,5 +1,6 @@
 package API;
 
+import Set.SetNode;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
@@ -42,33 +43,43 @@ public class API {
         }
     }
 
-    public static void unionFind(Image blackAndWhiteImage){
+
+    public static int[] method(Image blackAndWhiteImage, int[] pixels){
         if (blackAndWhiteImage != null) {
             int height = (int) blackAndWhiteImage.getHeight();
             int width = (int) blackAndWhiteImage.getWidth();
-            ArrayList coordinates = new ArrayList<Integer[]>();
+            Color white = new Color(1,1,1,1);
             PixelReader pixelReader = blackAndWhiteImage.getPixelReader();
 
             for (int x = 0; x<width; x++){
                 for (int y = 0; y<height; y++){
                     Color colour = pixelReader.getColor(x,y);
-                    if (colour.getRed()==1 && colour.getGreen()==1 && colour.getBlue()==1){
-                        int[] pixel = new int[2];
-                        pixel[0] = x;
-                        pixel[1] = y;
-                        coordinates.add(pixel);
+                    if (colour.equals(white)){
+                        pixels[x * width + y] = x * width + y;
                     }
                     else{
-                    System.out.println(x+","+y+"Black");}
+
+                        pixels[x * width + y] = -1;
+                    }
                 }
-                }
+            }
+            return pixels;
+        }else {
+            return null;
         }
     }
-    public static int find(int[] a,int id){
-        while (a[id]==id){
-            a[id]=a[a[id]];
-            id=a[id];
-        }
-        return id;
+    public static SetNode<?> find(SetNode<?> node) {
+        return node.parent==null ? node : (find(node.parent));
+    }
+    public static int find(int[] a, int id) {
+        return a[id] == id ? id : (a[id] = find(a, a[id]));
+    }
+        public static void unionBySize(SetNode<?> p, SetNode<?> q) {
+        SetNode<?> rootp=find(p);
+        SetNode<?> rootq=find(q);
+        SetNode<?> biggerRoot=rootp.size>=rootq.size ? rootp : rootq;
+        SetNode<?> smallerRoot=biggerRoot==rootp ? rootq : rootp;
+        smallerRoot.parent=biggerRoot;
+        biggerRoot.size+=smallerRoot.size;
     }
 }

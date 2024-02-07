@@ -50,7 +50,7 @@ public class MainController {
                 new FileChooser.ExtensionFilter("All Files", "*.*"));
         File selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile != null){
-            image = new Image(selectedFile.toURI().toString());
+            image = new Image(selectedFile.toURI().toString(),500,500,false,false);
 
         }
         originalImageView.setImage(image);
@@ -62,7 +62,6 @@ public class MainController {
         blackAndWhiteImageView.setOpacity(1);
         blackAndWhite = API.detectColour(image, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
         blackAndWhiteImageView.setImage(blackAndWhite);
-        API.unionFind(blackAndWhite);
     }
     @FXML
     protected void previousImage(){
