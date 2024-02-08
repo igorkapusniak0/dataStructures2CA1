@@ -79,8 +79,7 @@ public class MainController {
     protected void nextImage(){
         blackAndWhite = API.detectColour(image, redIntensitySlider, greenIntensitySlider, blueIntensitySlider,hueIntensitySlider.getValue(),saturationIntensitySlider.getValue(),brightnessIntensitySlider.getValue());
         imageView.setImage(blackAndWhite);
-        int[] pixels = new int[(int) image.getHeight()* (int) image.getWidth()];
-        pixels = API.findWhite(blackAndWhite);
+        int[] pixels = API.findWhite(blackAndWhite);
         unionFind(pixels);
     }
     @FXML
@@ -90,13 +89,15 @@ public class MainController {
 
     private void unionFind(int[] pixels){
         for (int i = 0; i<pixels.length; i++){
-            int down = i+(int) blackAndWhite.getWidth();
-            int right = i+1;
-            if (pixels[i]!=-1 && pixels[right]!= -1 && right<pixels.length){
-                API.unionByHeight(pixels,i,right);
-            }
-            if (pixels[i] != -1 && pixels[down]!=-1 && down<=pixels.length-blackAndWhite.getHeight()){
-                API.unionByHeight(pixels,i,down);
+            if (pixels[i]!=-1){
+                int down = i+(int) blackAndWhite.getWidth();
+                int right = i+1;
+                if (pixels[i]!=-1 && pixels[right]!= -1 && right<pixels.length){
+                    API.unionByHeight(pixels,i,right);
+                }
+                if (pixels[i] != -1 && pixels[down]!=-1 && down<=pixels.length-blackAndWhite.getHeight()){
+                    API.unionByHeight(pixels,i,down);
+                }
             }
         }
     }
