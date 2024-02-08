@@ -51,15 +51,17 @@ public class API {
             Color white = new Color(1,1,1,1);
             int[] pixels = new int[height*width];
             PixelReader pixelReader = blackAndWhiteImage.getPixelReader();
+            int index = 0;
 
             for (int y = 0; y<width; y++){
                 for (int x = 0; x<height; x++){
                     Color colour = pixelReader.getColor(x,y);
                     if (colour.equals(white)){
-                        pixels[x+y] = x;
+                        pixels[index] = x;
                     }else{
-                        pixels[x+y] = -1;
+                        pixels[index] = -1;
                     }
+                    index+=1;
                 }
             }
             return pixels;
