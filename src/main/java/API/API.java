@@ -57,7 +57,7 @@ public class API {
                 for (int x = 0; x<height; x++){
                     Color colour = pixelReader.getColor(x,y);
                     if (colour.equals(white)){
-                        pixels[index] = x;
+                        pixels[index] = index;
                     }else{
                         pixels[index] = -1;
                     }
@@ -71,6 +71,8 @@ public class API {
     }
     public static int find(int[] a, int id) {
         return a[id] == id ? id : (a[id] = find(a, a[id]));
+
+
     }
     public static void unionByHeight(int[] a, int p, int q) {
         int rootp=find(a,p);
