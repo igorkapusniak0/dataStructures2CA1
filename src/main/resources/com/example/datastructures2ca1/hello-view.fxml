@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1400.0" style="-fx-border-color: black; -fx-border-width: 5;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.MainController">
-   <Button layoutX="659.0" layoutY="663.0" mnemonicParsing="false" onAction="#openImage" text="Open Image" />
+   <Button layoutX="659.0" layoutY="696.0" mnemonicParsing="false" onAction="#openImage" text="Open Image" />
    <HBox alignment="CENTER" layoutY="34.0" prefHeight="500.0" prefWidth="1400.0" spacing="30.0">
       <Button alignment="CENTER" mnemonicParsing="false" onAction="#previousImage" text="&lt;">
          <font>
@@ -21,7 +21,7 @@
       <Pane prefHeight="510.0" prefWidth="510.0" style="-fx-border-color: black; -fx-border-width: 10;">
          <ImageView fx:id="imageView" fitHeight="500.0" fitWidth="500.0" layoutX="5.0" pickOnBounds="true" preserveRatio="true" />
       </Pane>
-      <Button alignment="CENTER" mnemonicParsing="false" onAction="#nextImage" text="&gt;">
+      <Button fx:id="findButton" alignment="CENTER" mnemonicParsing="false" onAction="#nextImage" text="&gt;">
          <font>
             <Font size="25.0" />
          </font>
@@ -29,19 +29,23 @@
    </HBox>
    <VBox prefHeight="750.0" prefWidth="300.0">
       <AnchorPane prefHeight="807.0" prefWidth="300.0" style="-fx-background-color: gray; -fx-border-color: black; -fx-border-width: 5;">
-         <Slider fx:id="redIntensitySlider" blockIncrement="1" layoutX="72.0" layoutY="57.0" max="360.0" />
-         <Slider fx:id="greenIntensitySlider" blockIncrement="0.01" layoutX="72.0" layoutY="122.0" max="1.0" />
-         <Slider fx:id="blueIntensitySlider" blockIncrement="0.01" layoutX="72.0" layoutY="173.0" max="1.0" />
+         <Slider fx:id="redIntensitySlider" blockIncrement="1" layoutX="72.0" layoutY="57.0" max="1" min="0" />
+         <Slider fx:id="greenIntensitySlider" blockIncrement="0.01" layoutX="72.0" layoutY="122.0" max="1.0" min="-1" />
+         <Slider fx:id="blueIntensitySlider" blockIncrement="0.01" layoutX="72.0" layoutY="173.0" max="1.0" min="-1" />
          <Label layoutX="110.0" layoutY="30.0" text="Hue Intensity" />
-         <Label layoutX="106.0" layoutY="150.0" text="Saturation Intensity" />
-         <Label layoutX="102.0" layoutY="97.0" text="Brightness Intensity" />
-         <Slider fx:id="hueIntensitySlider" blockIncrement="1" layoutX="65.0" layoutY="319.0" max="360" />
-         <Slider fx:id="saturationIntensitySlider" blockIncrement="0.01" layoutX="65.0" layoutY="361.0" max="1.0" />
-         <Slider fx:id="brightnessIntensitySlider" blockIncrement="0.01" layoutX="65.0" layoutY="404.0" max="1.0" />
-         <Label layoutX="95.0" layoutY="296.0" text="Hue Tolerance" />
-         <Label layoutX="78.0" layoutY="344.0" text="Saturation Tolerance" />
-         <Label layoutX="83.0" layoutY="387.0" text="Brightness Tolerance" />
+         <Label layoutX="102.0" layoutY="97.0" text="Saturation Intensity" />
+         <Label layoutX="106.0" layoutY="150.0" text="Brightness Intensity" />
       </AnchorPane>
    </VBox>
    <VBox layoutX="1100.0" prefHeight="750.0" prefWidth="300.0" style="-fx-background-color: gray; -fx-border-color: black; -fx-border-width: 5;" />
+   <HBox alignment="CENTER" layoutX="442.0" layoutY="548.0" prefHeight="52.0" prefWidth="510.0" spacing="15.0">
+      <children>
+         <ImageView fx:id="littleImageView1" fitHeight="72.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true" />
+         <ImageView fx:id="littleImageView2" fitHeight="72.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true" />
+         <ImageView fx:id="littleImageView3" fitHeight="72.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true" />
+         <ImageView fx:id="littleImageView4" fitHeight="72.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true" />
+         <ImageView fx:id="littleImageView5" fitHeight="72.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true" />
+      </children>
+   </HBox>
+   <Button layoutX="661.0" layoutY="660.0" mnemonicParsing="false" text="Find Colour" onAction="#method"/>
 </AnchorPane>
