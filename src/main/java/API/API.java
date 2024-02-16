@@ -5,6 +5,10 @@ import javafx.scene.image.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
 public class API {
     public static Image processedImage(Image image,Color pixelColor, Slider hueSlider, Slider saturationSlider, Slider brightnessSlider) {
         int width = (int) image.getWidth();
@@ -93,33 +97,49 @@ public class API {
         }
     }
     public static int find(int[] a, int id) {
-        return a[id] < 0 ? id : (a[id] = find(a, a[id]));
-    }
+        //System.out.println("index:"+id + " number:"+ a[id]);
 
-    public static void unionByHeight(int[] a, int p, int q) {
-        int rootp=find(a,p);
-        int rootq=find(a,q);
-        int deeperRoot=a[rootp]<a[rootq] ? rootp : rootq;
-        int shallowerRoot=deeperRoot==rootp ? rootq : rootp;
-        int temp=a[shallowerRoot];
-        a[shallowerRoot]=deeperRoot;
-        if(a[deeperRoot]==temp) a[deeperRoot]--;
-
-    }
-    public static void unionBySize(int[] a, int p, int q) {
-        int rootp=find(a,p);
-        int rootq=find(a,q);
-        int biggerRoot=a[rootp]<a[rootq] ? rootp : rootq;
-        int smallerRoot=biggerRoot==rootp ? rootq : rootp;
-        if (rootp!=rootq){
-            a[biggerRoot]+=a[smallerRoot];
-            a[smallerRoot]=biggerRoot;
+        if(a[id] == a.length+1){
+            return id;
+        }
+        else if (a[id]<0) {
+            return id;
+        }else {
+            return find(a,a[id]);
         }
     }
 
-    public static void union(int[] imageArray, int a, int b) {
-        imageArray[find(imageArray,b)]=find(imageArray,a);
+
+    public static void unionBySize(int[] a, int p, int q) {
+
+        int rootp=find(a,p);
+        int rootq=find(a,q);
+
+        if (rootp == rootq) return;
+
+        int biggerRoot=a[rootp]<=a[rootq] ? rootp : rootq;
+        int smallerRoot=biggerRoot==rootq ? rootp : rootq;
+
+        a[biggerRoot]+=a[smallerRoot];
+        a[smallerRoot]=biggerRoot;
+
     }
+    /*public static void unionBySize(int[] parent, int p, int q) {
+        int rootP = find(parent,p);
+        int rootQ = find(parent,q);
+
+        if (rootP == rootQ) return;
+
+        if (parent[rootP] < parent[rootQ]) {
+            parent[rootP] += parent[rootQ];
+            parent[rootQ] = rootP;
+        } else {
+            parent[rootQ] += parent[rootP];
+            parent[rootP] = rootQ;
+        }
+    }*/
+
+
 
 
     public static Rectangle selectRectangle(ImageView imageView, int minX, int minY, int maxX, int maxY){
@@ -132,22 +152,7 @@ public class API {
         return rectangle;
     }
 
-    public static int[] noiseFilter(int[] pixels, int tolerance){
-        for (int i = 0;i<pixels.length;i++){
-            if (pixels[i]!= pixels.length+1){
-                if ((pixels[i] >= -tolerance) && (pixels[i] <0)){
-                    pixels[i] = pixels.length+1;
-                }
-                if (pixels[i] >= 0 && pixels[i] != pixels.length+1){
-                    if (API.find(pixels,i)>= -tolerance && API.find(pixels,i)<0){
-                        pixels[i] = pixels.length+1;
-                    }
 
-                }
-            }
-        }
-        return pixels;
-    }
 
 
     public static Image rebuildImage(int[] pixels){
@@ -177,6 +182,101 @@ public class API {
         rectangle.setLayoutY(imageView.getLayoutY());
         return rectangle;
     }
+
+    public static Image colorSets(Image originalImage, int[] pixelRoots) {
+        int width = (int) originalImage.getWidth();
+        int height = (int) originalImage.getHeight();
+        WritableImage coloredImage = new WritableImage(width, height);
+        PixelWriter writer = coloredImage.getPixelWriter();
+
+        // Map to store unique set roots to colors
+        Map<Integer, Color> rootColorMap = new HashMap<>();
+
+        // Populate the map with a unique color for each set
+        for (int i = 0; i < pixelRoots.length; i++) {
+            if (pixelRoots[i] != pixelRoots.length+1){
+                int root = find(pixelRoots, i);
+                rootColorMap.putIfAbsent(root, generateUniqueColor(root, rootColorMap.size()));
+            }
+        }
+
+        // Color the pixels
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int index = y * width + x;
+                if (pixelRoots[index] != pixelRoots.length+1){
+                    int root = find(pixelRoots, index);
+                    if (pixelRoots[index] != pixelRoots.length + 1) { // Check if not black
+                        Color color = rootColorMap.get(root);
+                        writer.setColor(x, y, color);
+                    } else {
+                        writer.setColor(x, y, Color.BLACK); // Or any background color
+                    }
+                }
+            }
+        }
+
+        return coloredImage;
+    }
+
+    public static int[] noiseFilter(int[] pixels, int tolerance) {
+        for (int i = 0; i < pixels.length; i++){
+            if (pixels[i]!= pixels.length+1){
+                if (pixels[i]>-tolerance && pixels[i]<0) {
+                    pixels[i] = pixels.length+1;
+                }
+            }
+        }
+        for (int i = 0; i < pixels.length; i++){
+            if (pixels[i]!= pixels.length+1){
+                if (pixels[find(pixels,i)]==pixels.length+1) {
+                    pixels[i] = pixels.length+1;
+                }
+            }
+        }
+        return pixels;
+
+    }
+    public static int countUniqueSets(int[] pixels) {
+        HashSet<Integer> uniqueRoots = new HashSet<>();
+        for (int i = 0; i < pixels.length; i++) {
+            // Skip elements that have been marked as not part of any set
+            if (pixels[i] != pixels.length + 1) {
+                int root = find(pixels, i);
+                uniqueRoots.add(root);
+            }
+        }
+        return uniqueRoots.size();
+    }
+
+
+    private static Color generateUniqueColor(int root, int count) {
+        // Generate a unique color based on the root or count. This is a simplistic approach.
+        // You may need a more sophisticated method for generating distinct colors if there are many sets.
+        return Color.hsb((float) root / count * 360, 1.0, 1.0);
+    }
+
+    public static int[] unionFind(Image image, int[] pixels) {
+        int width = (int) image.getWidth();
+        for (int i = 0; i < pixels.length; i++) {
+            if (pixels[i] != pixels.length+1) {
+                int down = i + width;
+                int right = i + 1;
+
+                System.out.println("i:" + i + "right:" + right);
+                if (i % width < width - 1 && pixels[right] < pixels.length+1) {
+                    API.unionBySize(pixels, i, right);
+                }
+
+                System.out.println("i:" + i + "down:" + down);
+                if (down < pixels.length && pixels[down] < pixels.length+1) {
+                    API.unionBySize(pixels, i, down);
+                }
+            }
+        }
+        return pixels;
+    }
+
 
 
 

@@ -12,10 +12,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 public class MainController {
@@ -87,6 +84,9 @@ public class MainController {
         littleImageView4.setOnMouseClicked(mouseEvent -> {
             imageView.setImage(rebuild);
         });
+        littleImageView5.setOnMouseClicked(mouseEvent -> {
+            imageView.setImage(finalImage);
+        });
 
         clickToGetColour();
 
@@ -106,10 +106,6 @@ public class MainController {
         }
         littleImageView1.setImage(image);
         imageView.setImage(image);
-        processedImage = API.processedImage(image,selectedColour, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
-        littleImageView2.setImage(processedImage);
-        blackAndWhiteImage = API.convertToBlackAndWhite(processedImage, selectedColour,0.1);
-        littleImageView3.setImage(blackAndWhiteImage);
     }
 
     public void method(){
@@ -127,18 +123,51 @@ public class MainController {
         imageView.setImage(processedImage);
         littleImageView2.setImage(processedImage);
         int[] pixels = API.findWhite(blackAndWhiteImage);
-        unionFind(pixels);
-        /*for (int i = 0;i<pixels.length;i++){
-            if (pixels[i]<pixels.length+1){
-                System.out.println(i+","+pixels[i] + " test:" + pixels[API.find(pixels,i)]);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("output1.txt"))) {
+
+            for (int i = 0; i < pixels.length; i++) {
+
+                writer.write((i +", " + pixels[i]));
+                writer.newLine();
             }
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle exceptions or errors here
         }
-        pixels = API.noiseFilter(pixels,40);*/
+
+        pixels = API.unionFind(blackAndWhiteImage, pixels);
+
+        try (BufferedWriter writer2 = new BufferedWriter(new FileWriter("output2.txt"))) {
+            for (int i = 0; i < pixels.length; i++) {
+                writer2.write((i +", " + pixels[i]));
+                writer2.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle exceptions or errors here
+        }
+
+
+        pixels = API.noiseFilter(pixels,40);
+
+/*
+        try (BufferedWriter writer3 = new BufferedWriter(new FileWriter("output3.txt"))) {
+            for (int i = 0; i < pixels.length; i++) {
+                if (pixels[i]!=pixels.length+1){
+                    writer3.write(Integer.toString(pixels[API.find(pixels,i)]));
+                    writer3.newLine();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle exceptions or errors here
+        }*/
 
         rebuild = API.rebuildImage(pixels);
         littleImageView4.setImage(rebuild);
         imageView.setImage(rebuild);
-        drawLocatingRectangles(pixels);
+        finalImage = API.colorSets(rebuild,pixels);
+        littleImageView5.setImage(finalImage);
+        System.out.println(API.countUniqueSets(pixels));
+        //drawLocatingRectangles(pixels);
     }
 
 
@@ -147,29 +176,10 @@ public class MainController {
     @FXML
     protected void previousImage(){
         imageView.setImage(image);
-        int[] pixels = API.findWhite(blackAndWhiteImage);
-        for (int i = 0; i<pixels.length;i++){
-            System.out.println(pixels[i]);
-        }
+
     }
 
-    private void unionFind(int[] pixels) {
-        int width = (int) blackAndWhiteImage.getWidth();
-        for (int i = 0; i < pixels.length; i++) {
-            if (pixels[i] != pixels.length+1) {
-                int down = i + width;
-                int right = i + 1;
 
-                if (i % width < width - 1 && pixels[right] != pixels.length+1) {
-                    API.unionBySize(pixels, i, right);
-                }
-
-                if (down < pixels.length && pixels[down] != pixels.length+1) {
-                    API.unionBySize(pixels, i, down);
-                }
-            }
-        }
-    }
     private void clickToGetColour(){
         imageView.setOnMouseClicked(mouseEvent ->  {
                 x = (int) mouseEvent.getX();
@@ -184,6 +194,10 @@ public class MainController {
                 ((Pane) imageView.getParent()).getChildren().add(rectangle);
 
                 System.out.println(selectedColour);
+
+            processedImage = API.processedImage(image,selectedColour, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
+            littleImageView2.setImage(processedImage);
+            imageView.setImage(processedImage);
 
         });
     }
