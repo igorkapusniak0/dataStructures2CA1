@@ -7,6 +7,7 @@ import javafx.scene.shape.Rectangle;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class API {
@@ -173,15 +174,6 @@ public class API {
         return writableImage;
     }
 
-    public static Rectangle locatingRectangle(ImageView imageView, int minX, int minY, int maxX, int maxY){
-        Rectangle rectangle = new Rectangle(minX, minY, maxX-minX, maxY-minY);
-        rectangle.setFill(Color.TRANSPARENT);
-        rectangle.setStroke(Color.BLACK);
-        rectangle.setStrokeWidth(2);
-        rectangle.setLayoutX(imageView.getLayoutX());
-        rectangle.setLayoutY(imageView.getLayoutY());
-        return rectangle;
-    }
 
     public static Image colorSets(Image originalImage, int[] pixelRoots) {
         int width = (int) originalImage.getWidth();
@@ -238,15 +230,48 @@ public class API {
 
     }
     public static int countUniqueSets(int[] pixels) {
-        HashSet<Integer> uniqueRoots = new HashSet<>();
+        int number = 0;
         for (int i = 0; i < pixels.length; i++) {
-            // Skip elements that have been marked as not part of any set
-            if (pixels[i] != pixels.length + 1) {
-                int root = find(pixels, i);
-                uniqueRoots.add(root);
+            if (pixels[i] < 0) {
+                number++;
             }
         }
-        return uniqueRoots.size();
+        return number
+                ;
+    }
+    public static HashMap getSets(int[] pixels){
+        HashMap<Integer, LinkedList> store = new HashMap();
+        for (int i = 0 ; i<pixels.length;i++){
+            if (pixels[i] < 0){
+                LinkedList<Integer> link = new LinkedList();
+                link.add(i);
+                store.put(i,link);
+            }
+        }
+        for (int i = 0 ; i<pixels.length;i++){
+            if (pixels[i]!= pixels.length+1){
+                int root = find(pixels,i);
+                LinkedList<Integer> link = store.get(root);
+                link.add(i);
+            }
+        }
+        return store;
+    }
+    public static Image getSubImage(Image image, int startX, int startY, int endX, int endY) {
+        int width = endX - startX;
+        int height = endY - startY;
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelWriter pixelWriter = writableImage.getPixelWriter();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pixel = pixelReader.getArgb(startX + x, startY + y);
+                pixelWriter.setArgb(x, y, pixel);
+            }
+        }
+
+        return writableImage;
     }
 
 

@@ -3,29 +3,20 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1400.0" style="-fx-border-color: black; -fx-border-width: 5;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.MainController">
-   <Button layoutX="659.0" layoutY="696.0" mnemonicParsing="false" onAction="#openImage" text="Open Image" />
+   <Button layoutX="605.0" layoutY="696.0" mnemonicParsing="false" onAction="#openImage" text="Open Image" />
    <HBox alignment="CENTER" layoutY="34.0" prefHeight="500.0" prefWidth="1400.0" spacing="30.0">
-      <Button alignment="CENTER" mnemonicParsing="false" onAction="#previousImage" text="&lt;">
-         <font>
-            <Font size="25.0" />
-         </font>
-      </Button>
       <Pane prefHeight="510.0" prefWidth="510.0" style="-fx-border-color: black; -fx-border-width: 10;">
          <ImageView fx:id="imageView" fitHeight="500.0" fitWidth="500.0" layoutX="5.0" pickOnBounds="true" preserveRatio="true" />
       </Pane>
-      <Button fx:id="findButton" alignment="CENTER" mnemonicParsing="false" onAction="#nextImage" text="&gt;">
-         <font>
-            <Font size="25.0" />
-         </font>
-      </Button>
    </HBox>
    <VBox prefHeight="750.0" prefWidth="300.0">
       <AnchorPane prefHeight="807.0" prefWidth="300.0" style="-fx-background-color: gray; -fx-border-color: black; -fx-border-width: 5;">
@@ -35,9 +26,22 @@
          <Label layoutX="110.0" layoutY="30.0" text="Hue Intensity" />
          <Label layoutX="102.0" layoutY="97.0" text="Saturation Intensity" />
          <Label layoutX="106.0" layoutY="150.0" text="Brightness Intensity" />
+         <Slider fx:id="toleranceSlider" blockIncrement="1" layoutX="72.0" layoutY="654.0" max="300.0" showTickLabels="true" />
+         <Label layoutX="98.0" layoutY="629.0" text="Noise Reduction" />
+         <Button layoutX="90.0" layoutY="698.0" mnemonicParsing="false" onAction="#noiseReduction" text="Noise Reduction" />
+         <TextField fx:id="nameTextField" layoutX="76.0" layoutY="328.0" />
+         <TextField fx:id="descriptionTextField" layoutX="71.0" layoutY="394.0" />
+         <Label layoutX="117.0" layoutY="311.0" text="Pill Name" />
+         <Label layoutX="117.0" layoutY="375.0" text="Description" />
+         <Button layoutX="114.0" layoutY="440.0" mnemonicParsing="false" text="Add Pill" onAction="#addPills"/>
       </AnchorPane>
    </VBox>
-   <VBox layoutX="1100.0" prefHeight="750.0" prefWidth="300.0" style="-fx-background-color: gray; -fx-border-color: black; -fx-border-width: 5;" />
+   <VBox layoutX="1100.0" prefHeight="750.0" prefWidth="300.0" style="-fx-background-color: gray; -fx-border-color: black; -fx-border-width: 5;">
+      <children>
+         <TabPane fx:id="tabPane" prefHeight="747.0" prefWidth="290.0" tabClosingPolicy="UNAVAILABLE">
+         </TabPane>
+      </children>
+   </VBox>
    <HBox alignment="CENTER" layoutX="442.0" layoutY="548.0" prefHeight="52.0" prefWidth="510.0" spacing="15.0">
       <children>
          <ImageView fx:id="littleImageView1" fitHeight="72.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true" />
@@ -47,5 +51,7 @@
          <ImageView fx:id="littleImageView5" fitHeight="72.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true" />
       </children>
    </HBox>
-   <Button layoutX="661.0" layoutY="660.0" mnemonicParsing="false" text="Find Colour" onAction="#method"/>
+   <Button layoutX="605.0" layoutY="659.0" mnemonicParsing="false" onAction="#findColour" text="Find Colour" />
+   <Button layoutX="723.0" layoutY="659.0" mnemonicParsing="false" onAction="#locatePills" text="Locate Pills" />
+   <Button layoutX="738.0" layoutY="696.0" mnemonicParsing="false" onAction="#resetImageView" text="Reset" />
 </AnchorPane>
