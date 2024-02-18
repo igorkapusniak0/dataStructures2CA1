@@ -35,8 +35,6 @@ public class MainController {
     @FXML
     TextField descriptionTextField = new TextField();
     @FXML
-    Button findButton = new Button();
-    @FXML
     ImageView imageView = new ImageView();
     @FXML
     Slider redIntensitySlider = new Slider();
@@ -46,6 +44,10 @@ public class MainController {
     Slider blueIntensitySlider = new Slider();
     @FXML
     Slider toleranceSlider = new Slider();
+    @FXML
+    Slider toleranceColourSlider1 = new Slider();
+    @FXML
+    Slider toleranceColourSlider2 = new Slider();
     @FXML
     ImageView littleImageView1 = new ImageView();
     @FXML
@@ -63,7 +65,7 @@ public class MainController {
     public void initialize() {
         redIntensitySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (image != null) {
-                processedImage = API.processedImage(image, selectedColour, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
+                processedImage = API.processedImage(image, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
                 imageView.setImage(processedImage);
                 littleImageView2.setImage(processedImage);
 
@@ -71,14 +73,14 @@ public class MainController {
         });
         greenIntensitySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (image != null) {
-                processedImage = API.processedImage(image, selectedColour, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
+                processedImage = API.processedImage(image, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
                 imageView.setImage(processedImage);
                 littleImageView2.setImage(processedImage);
             }
         });
         blueIntensitySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (image != null) {
-                processedImage = API.processedImage(image, selectedColour, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
+                processedImage = API.processedImage(image, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
                 imageView.setImage(processedImage);
                 littleImageView2.setImage(processedImage);
             }
@@ -120,7 +122,7 @@ public class MainController {
     }
 
     public void findColour(){
-        blackAndWhiteImage = API.convertToBlackAndWhite(processedImage,selectedColour,0.1);
+        blackAndWhiteImage = API.convertToBlackAndWhite(processedImage,selectedColour,toleranceColourSlider1.getValue());
         imageView.setImage(blackAndWhiteImage);
         littleImageView3.setImage(blackAndWhiteImage);
     }
@@ -171,7 +173,7 @@ public class MainController {
 
                 System.out.println(selectedColour);
 
-            processedImage = API.processedImage(image,selectedColour, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
+            processedImage = API.processedImage(image, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
             littleImageView2.setImage(processedImage);
             imageView.setImage(processedImage);
 

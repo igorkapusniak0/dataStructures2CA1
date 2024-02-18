@@ -11,36 +11,28 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class API {
-    public static Image processedImage(Image image,Color pixelColor, Slider hueSlider, Slider saturationSlider, Slider brightnessSlider) {
+    public static Image processedImage(Image image, Slider hueSlider, Slider saturationSlider, Slider brightnessSlider) {
         int width = (int) image.getWidth();
         int height = (int) image.getHeight();
         WritableImage writableImage = new WritableImage(width, height);
         PixelReader pixelReader = image.getPixelReader();
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
-        double red = pixelColor.getRed();
-        double green = pixelColor.getGreen();
-        double blue = pixelColor.getBlue();
-
         for (int y = 0; y < width; y++) {
             for (int x = 0; x < height; x++) {
                 Color color = pixelReader.getColor(x, y);
-                if ((color.getRed()>=pixelColor.getRed()-.2 && color.getRed()<=pixelColor.getRed()+.2) && (color.getGreen()>=pixelColor.getGreen()-.2 && color.getGreen()<=pixelColor.getGreen()+.2) && (color.getBlue()>=pixelColor.getBlue()-.2 && color.getBlue()<=pixelColor.getBlue()+.2)){
                     double hue = (color.getHue() + 360 * hueSlider.getValue()) % 360;
                     double saturation = Math.max(0, Math.min(color.getSaturation() * (1 + saturationSlider.getValue()), 1));
                     double brightness = Math.max(0, Math.min(color.getBrightness() * (1 + brightnessSlider.getValue()), 1));
 
                     pixelWriter.setColor(x, y, Color.hsb(hue, saturation, brightness));
-                }
-                else{
-                    pixelWriter.setColor(x,y, color);
-                }
+
             }
         }
         return writableImage;
     }
-    public static Image convertToBlackAndWhite(Image image, Color pixelColour, double tolerance) {
-        if (image == null || pixelColour == null) return null;
+    public static Image convertToBlackAndWhite(Image image, Color pixelColour1, double tolerance) {
+        if (image == null && pixelColour1 == null) return null;
 
         int width = (int) image.getWidth();
         int height = (int) image.getHeight();
@@ -52,16 +44,16 @@ public class API {
             for (int x = 0; x < height; x++) {
                 Color color = pixelReader.getColor(x, y);
 
-                boolean hueDifference = (pixelColour.getHue() <= color.getHue()+tolerance) && (pixelColour.getHue() >= color.getHue()-tolerance);
-                boolean saturationDifference = (pixelColour.getSaturation() <= color.getSaturation()+tolerance) && (pixelColour.getSaturation() >= color.getSaturation()-tolerance);
-                boolean brightnessDifference = (pixelColour.getBrightness() <= color.getBrightness()+tolerance) && (pixelColour.getBrightness() >= color.getBrightness()-tolerance);
-                boolean redDifference = (pixelColour.getRed() <= color.getRed()+tolerance) && (pixelColour.getRed() >= color.getRed()-tolerance);
-                boolean greenDifference = (pixelColour.getGreen() <= color.getGreen()+tolerance) && (pixelColour.getGreen() >= color.getGreen()-tolerance);
-                boolean blueDifference = (pixelColour.getBlue() <= color.getBlue()+tolerance) && (pixelColour.getBlue() >= color.getBlue()-tolerance);
+                boolean hueDifference1 = (pixelColour1.getHue() <= color.getHue()+tolerance) && (pixelColour1.getHue() >= color.getHue()-tolerance);
+                boolean saturationDifference1 = (pixelColour1.getSaturation() <= color.getSaturation()+tolerance) && (pixelColour1.getSaturation() >= color.getSaturation()-tolerance);
+                boolean brightnessDifference1 = (pixelColour1.getBrightness() <= color.getBrightness()+tolerance) && (pixelColour1.getBrightness() >= color.getBrightness()-tolerance);
+                boolean redDifference1 = (pixelColour1.getRed() <= color.getRed()+tolerance) && (pixelColour1.getRed() >= color.getRed()-tolerance);
+                boolean greenDifference1 = (pixelColour1.getGreen() <= color.getGreen()+tolerance) && (pixelColour1.getGreen() >= color.getGreen()-tolerance);
+                boolean blueDifference1 = (pixelColour1.getBlue() <= color.getBlue()+tolerance) && (pixelColour1.getBlue() >= color.getBlue()-tolerance);
 
 
 
-                if ((hueDifference && saturationDifference && brightnessDifference) || (redDifference && greenDifference && blueDifference)) {
+                if ((hueDifference1 && saturationDifference1 && brightnessDifference1) || (redDifference1 && greenDifference1 && blueDifference1)) {
                     pixelWriter.setColor(x, y, Color.WHITE);
                 } else {
                     pixelWriter.setColor(x, y, Color.BLACK);
