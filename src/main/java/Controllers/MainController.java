@@ -29,7 +29,8 @@ public class MainController {
     private int x;
     private int y;
     private int setCount = 0;
-    private Rectangle rectangle;
+    private Rectangle rectangle1;
+    private Rectangle rectangle2;
     Color selectedColour1;
     Color selectedColour2;
     @FXML
@@ -176,11 +177,11 @@ public class MainController {
                 System.out.println("X= " + x + ", Y= " + y);
                 selectedColour1 = image.getPixelReader().getColor(x,y);
 
-                if (rectangle != null) {
-                    ((Pane) imageView.getParent()).getChildren().remove(rectangle);
+                if (rectangle1 != null) {
+                    ((Pane) imageView.getParent()).getChildren().remove(rectangle1);
                 }
-                rectangle = API.selectRectangle(imageView, x-5,y-5,x+5,y+5);
-                ((Pane) imageView.getParent()).getChildren().add(rectangle);
+                rectangle1 = API.selectRectangle(imageView, x-5,y-5,x+5,y+5);
+                ((Pane) imageView.getParent()).getChildren().add(rectangle1);
                 System.out.println(selectedColour1);
             }
             if (mouseEvent.getButton() == MouseButton.SECONDARY){
@@ -189,11 +190,11 @@ public class MainController {
                 System.out.println("X= " + x + ", Y= " + y);
                 selectedColour2 = image.getPixelReader().getColor(x,y);
 
-                if (rectangle != null) {
-                    ((Pane) imageView.getParent()).getChildren().remove(rectangle);
+                if (rectangle2 != null) {
+                    ((Pane) imageView.getParent()).getChildren().remove(rectangle2);
                 }
-                rectangle = API.selectRectangle(imageView, x-5,y-5,x+5,y+5);
-                ((Pane) imageView.getParent()).getChildren().add(rectangle);
+                rectangle2 = API.selectRectangle(imageView, x-5,y-5,x+5,y+5);
+                ((Pane) imageView.getParent()).getChildren().add(rectangle2);
                 System.out.println(selectedColour2);
             }
             processedImage = API.processedImage(image, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
