@@ -32,7 +32,11 @@ public class API {
         return writableImage;
     }
     public static Image convertToBlackAndWhite(Image image, Color pixelColour1, double tolerance) {
-        if (image == null && pixelColour1 == null) return null;
+        return convertToBlackAndWhite(image, pixelColour1, null, tolerance,1);
+    }
+
+    public static Image convertToBlackAndWhite(Image image, Color pixelColour1, Color pixelColour2, double tolerance1, double tolerance2) {
+        if (image == null || (pixelColour1 == null)) return null;
 
         int width = (int) image.getWidth();
         int height = (int) image.getHeight();
@@ -40,20 +44,14 @@ public class API {
         PixelReader pixelReader = image.getPixelReader();
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
-        for (int y = 0; y < width; y++) {
-            for (int x = 0; x < height; x++) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
                 Color color = pixelReader.getColor(x, y);
 
-                boolean hueDifference1 = (pixelColour1.getHue() <= color.getHue()+tolerance) && (pixelColour1.getHue() >= color.getHue()-tolerance);
-                boolean saturationDifference1 = (pixelColour1.getSaturation() <= color.getSaturation()+tolerance) && (pixelColour1.getSaturation() >= color.getSaturation()-tolerance);
-                boolean brightnessDifference1 = (pixelColour1.getBrightness() <= color.getBrightness()+tolerance) && (pixelColour1.getBrightness() >= color.getBrightness()-tolerance);
-                boolean redDifference1 = (pixelColour1.getRed() <= color.getRed()+tolerance) && (pixelColour1.getRed() >= color.getRed()-tolerance);
-                boolean greenDifference1 = (pixelColour1.getGreen() <= color.getGreen()+tolerance) && (pixelColour1.getGreen() >= color.getGreen()-tolerance);
-                boolean blueDifference1 = (pixelColour1.getBlue() <= color.getBlue()+tolerance) && (pixelColour1.getBlue() >= color.getBlue()-tolerance);
+                boolean matchesColour1 = pixelColour1 != null && matchesColour(color, pixelColour1, tolerance1);
+                boolean matchesColour2 = pixelColour2 != null && matchesColour(color, pixelColour2, tolerance2);
 
-
-
-                if ((hueDifference1 && saturationDifference1 && brightnessDifference1) || (redDifference1 && greenDifference1 && blueDifference1)) {
+                if (matchesColour1 || matchesColour2) {
                     pixelWriter.setColor(x, y, Color.WHITE);
                 } else {
                     pixelWriter.setColor(x, y, Color.BLACK);
@@ -62,6 +60,17 @@ public class API {
         }
 
         return writableImage;
+    }
+
+    private static boolean matchesColour(Color color, Color targetColour, double tolerance) {
+        boolean hueDifference = Math.abs(targetColour.getHue() - color.getHue()) <= tolerance;
+        boolean saturationDifference = Math.abs(targetColour.getSaturation() - color.getSaturation()) <= tolerance;
+        boolean brightnessDifference = Math.abs(targetColour.getBrightness() - color.getBrightness()) <= tolerance;
+        boolean redDifference = Math.abs(targetColour.getRed() - color.getRed()) <= tolerance;
+        boolean greenDifference = Math.abs(targetColour.getGreen() - color.getGreen()) <= tolerance;
+        boolean blueDifference = Math.abs(targetColour.getBlue() - color.getBlue()) <= tolerance;
+
+        return hueDifference && saturationDifference && brightnessDifference || redDifference && greenDifference && blueDifference;
     }
 
 
