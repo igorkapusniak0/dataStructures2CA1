@@ -64,6 +64,7 @@ public class MainController {
     ImageView littleImageView5 = new ImageView();
     @FXML
     TabPane tabPane = new TabPane();
+    
 
     @FXML
     public void initialize() {
@@ -238,6 +239,7 @@ public class MainController {
                 if (y < minY) minY = y;
                 if (y > maxY) maxY = y;
             }
+            count++;
             Image subImage =API.getSubImage(image,minX,minY,maxX,maxY);
             Pill pill = new Pill(name,description ,subImage, count,list.size());
             pills.add(pill);
@@ -304,18 +306,24 @@ public class MainController {
         VBox vBox = new VBox();
         Label name = new Label("Name: "+pill.getName());
         Label description = new Label("Description: "+pill.getDescription());
-        vBox.getChildren().addAll(name,description);
+        Separator separator = new Separator();
+        separator.setStyle("-fx-background-color: #ffffff; -fx-pref-width: 100px;-fx-pref-height: 3px;-fx-stroke-width: 3px;");
+        vBox.getChildren().addAll(name,description, separator);
+        ScrollPane scrollPane = new ScrollPane();
         for (Pill pill1:pills){
             ImageView subImageView = new ImageView();
             subImageView.setImage(pill1.getImage());
+            Label index = new Label("Index of pill: " + pill1.getNumber());
+            Label size = new Label("Size of set: "+pill1.getSize());
             subImageView.setFitWidth(100);
             subImageView.setFitHeight(100);
             subImageView.setPreserveRatio(true);
-            vBox.getChildren().add(subImageView);
+            vBox.getChildren().addAll(index,size,subImageView);
         }
         vBox.setAlignment(Pos.TOP_CENTER);
+        scrollPane.setContent(vBox);
 
-        tab.setContent(vBox);
+        tab.setContent(scrollPane);
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
             if (newTab == tab) {
