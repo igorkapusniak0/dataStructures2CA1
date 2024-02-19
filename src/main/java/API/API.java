@@ -277,8 +277,6 @@ public class API {
 
 
     private static Color generateUniqueColor(int root, int count) {
-        // Generate a unique color based on the root or count. This is a simplistic approach.
-        // You may need a more sophisticated method for generating distinct colors if there are many sets.
         return Color.hsb((float) root / count * 360, 1.0, 1.0);
     }
 

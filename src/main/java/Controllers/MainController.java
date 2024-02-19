@@ -3,6 +3,7 @@ package Controllers;
 import API.API;
 import Models.Pill;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.input.MouseButton;
@@ -280,7 +281,7 @@ public class MainController {
                 pillPane.setLayoutX(x);
                 pillPane.setLayoutY(y);
                 pillPane.setMaxSize(50,50);
-                Label label = new Label("shalom");
+                Label label = new Label("test");
                 pillPane.getChildren().add(label);
                 ((Pane) imageView.getParent()).getChildren().add(pillPane);
             });*/
@@ -303,14 +304,16 @@ public class MainController {
         VBox vBox = new VBox();
         Label name = new Label("Name: "+pill.getName());
         Label description = new Label("Description: "+pill.getDescription());
-        ImageView subImageView = new ImageView();
-
-
-        subImageView.setImage(pill.getImage());
-        subImageView.setFitWidth(100);
-        subImageView.setFitHeight(100);
-        subImageView.setPreserveRatio(true);
-        vBox.getChildren().addAll(name,description,subImageView);
+        vBox.getChildren().addAll(name,description);
+        for (Pill pill1:pills){
+            ImageView subImageView = new ImageView();
+            subImageView.setImage(pill1.getImage());
+            subImageView.setFitWidth(100);
+            subImageView.setFitHeight(100);
+            subImageView.setPreserveRatio(true);
+            vBox.getChildren().add(subImageView);
+        }
+        vBox.setAlignment(Pos.TOP_CENTER);
 
         tab.setContent(vBox);
         tabPane.getTabs().add(tab);
