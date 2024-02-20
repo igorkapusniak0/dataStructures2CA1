@@ -5,10 +5,7 @@ import javafx.scene.image.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class API {
     public static Image processedImage(Image image, Slider hueSlider, Slider saturationSlider, Slider brightnessSlider) {
@@ -174,43 +171,31 @@ public class API {
         }
         return writableImage;
     }
-
-
-    public static Image colorSets(Image originalImage, int[] pixelRoots) {
-        int width = (int) originalImage.getWidth();
-        int height = (int) originalImage.getHeight();
-        WritableImage coloredImage = new WritableImage(width, height);
-        PixelWriter writer = coloredImage.getPixelWriter();
-
-        // Map to store unique set roots to colors
-        Map<Integer, Color> rootColorMap = new HashMap<>();
-
-        // Populate the map with a unique color for each set
-        for (int i = 0; i < pixelRoots.length; i++) {
-            if (pixelRoots[i] != pixelRoots.length+1){
-                int root = find(pixelRoots, i);
-                rootColorMap.putIfAbsent(root, generateUniqueColor(root, rootColorMap.size()));
-            }
-        }
-
-        // Color the pixels
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                int index = y * width + x;
-                if (pixelRoots[index] != pixelRoots.length+1){
-                    int root = find(pixelRoots, index);
-                    if (pixelRoots[index] != pixelRoots.length + 1) { // Check if not black
-                        Color color = rootColorMap.get(root);
-                        writer.setColor(x, y, color);
-                    } else {
-                        writer.setColor(x, y, Color.BLACK); // Or any background color
-                    }
+    /*public static int[] mergePills(HashMap<Integer,HashMap> hashMap,Image image){
+        int size = (int) image.getHeight() * (int)image.getWidth();
+        int[] allPills = new int[size];
+        for (int i = 0; i<hashMap.size();i++){
+            HashMap<Integer,LinkedList> setMap = hashMap.get(i);
+            for (int ii = 0; ii<setMap.size(); ii++){
+                LinkedList<Integer> pillList = setMap.get(i);
+                for (int iii = 0; iii<pillList.size();iii++){
+                    allPills[pillList.get(iii)] = -1;
                 }
             }
         }
-
-        return coloredImage;
-    }
+        for ()
+    }*/
+   /* public static int[] mergeArrays(ArrayList<int[]> arrayList, Image image){
+        int size = (int) image.getHeight() * (int)image.getWidth();
+        int[] allPills = new int[size];
+        for (int i = 0; i<arrayList.size();i++) {
+            int[] pill = new int[arrayList.get(i).length];
+            for (int ii = 0; ii<pill.length;ii++){
+                allPills[ii] = pill[ii];
+            }
+        }
+        return allPills;
+    }*/
 
     public static int[] noiseFilter(int[] pixels, int tolerance) {
         for (int i = 0; i < pixels.length; i++){
@@ -237,8 +222,7 @@ public class API {
                 number++;
             }
         }
-        return number
-                ;
+        return number;
     }
     public static HashMap getSets(int[] pixels){
         HashMap<Integer, LinkedList> store = new HashMap();
@@ -275,10 +259,6 @@ public class API {
         return writableImage;
     }
 
-
-    private static Color generateUniqueColor(int root, int count) {
-        return Color.hsb((float) root / count * 360, 1.0, 1.0);
-    }
 
     public static int[] unionFind(Image image, int[] pixels) {
         int width = (int) image.getWidth();

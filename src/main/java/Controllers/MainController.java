@@ -7,29 +7,28 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 import java.io.*;
 import java.util.*;
 
 public class MainController {
+    //RangeSlider rangeSlider;
 
     private HashMap<Integer, HashMap> pillMap = new HashMap<>();
     private Image image;
+    private ArrayList<int[]> pixelArray= new ArrayList<>();
     private Image processedImage;
+    private int count = 0;
     private Image blackAndWhiteImage;
     private Image rebuild;
     private Image finalImage;
     private int x;
     private int y;
-    private int setCount = 0;
     private Rectangle rectangle1;
     private Rectangle rectangle2;
     Color selectedColour1;
@@ -64,7 +63,8 @@ public class MainController {
     ImageView littleImageView5 = new ImageView();
     @FXML
     TabPane tabPane = new TabPane();
-    
+
+
 
     @FXML
     public void initialize() {
@@ -125,7 +125,6 @@ public class MainController {
         littleImageView1.setImage(image);
         imageView.setImage(image);
     }
-
     public void findColour(){
         if (selectedColour2!=null){
             blackAndWhiteImage = API.convertToBlackAndWhite(processedImage,selectedColour1,selectedColour2, toleranceColourSlider1.getValue(), toleranceColourSlider2.getValue());
@@ -146,10 +145,11 @@ public class MainController {
         littleImageView4.setImage(rebuild);
         imageView.setImage(rebuild);
     }
-    private int count = 0;
     public void locatePills(){
         HashMap map = API.getSets(getPixels());
         pillMap.putIfAbsent(count,map);
+        Pane pane = (Pane) imageView.getParent();
+        pane.getChildren().removeIf(node -> "pillRectangle".equals(node.getUserData()) || "pillLabel".equals(node.getUserData()));
         drawLocatingRectangles(map,image);
         imageView.setImage(image);
     }
@@ -157,6 +157,7 @@ public class MainController {
         int[] pixels = API.findWhite(blackAndWhiteImage);
         pixels = API.unionFind(blackAndWhiteImage, pixels);
         pixels = API.noiseFilter(pixels, (int) toleranceSlider.getValue());
+        pixelArray.add(pixels);
         return pixels;
     }
 
@@ -246,6 +247,13 @@ public class MainController {
         }
         return pills;
     }
+    @FXML
+    public void drawAllLocatingRectangles(){
+        System.out.println(pillMap.size());
+        for (int i = 0; i<pillMap.size();i++){
+            drawLocatingRectangles(pillMap.get(i),image);System.out.println(i);
+        }
+    }
 
 
     private void drawLocatingRectangles(HashMap<Integer,LinkedList<Integer>> hashMap, Image image){
@@ -253,8 +261,7 @@ public class MainController {
         int width = (int) image.getWidth();
         int totalSize = height * width;
         int count = 0;
-        Pane pane = (Pane) imageView.getParent();
-        pane.getChildren().removeIf(node -> "pillRectangle".equals(node.getUserData()) || "pillLabel".equals(node.getUserData()));
+
 
         for (Map.Entry<Integer, LinkedList<Integer>> entry : hashMap.entrySet()) {
             LinkedList<Integer> list = entry.getValue();
@@ -276,17 +283,6 @@ public class MainController {
             }
             count+=1;
             Rectangle rectangle = new Rectangle(minX+5, minY, maxX - minX+2, maxY - minY);
-            /*rectangle.setOnMouseEntered(mouseEvent -> {
-                x = (int) mouseEvent.getX();
-                y = (int) mouseEvent.getY();
-                Pane pillPane = new Pane();
-                pillPane.setLayoutX(x);
-                pillPane.setLayoutY(y);
-                pillPane.setMaxSize(50,50);
-                Label label = new Label("test");
-                pillPane.getChildren().add(label);
-                ((Pane) imageView.getParent()).getChildren().add(pillPane);
-            });*/
             rectangle.setStroke(Color.RED);
             rectangle.setFill(Color.TRANSPARENT);
             rectangle.setUserData("pillRectangle");
@@ -328,11 +324,12 @@ public class MainController {
         tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
             if (newTab == tab) {
                 System.out.println(title);
+                Pane pane = (Pane) imageView.getParent();
+                pane.getChildren().removeIf(node -> "pillRectangle".equals(node.getUserData()) || "pillLabel".equals(node.getUserData()));
                 drawLocatingRectangles(pillMap.get(Integer.parseInt(title)), image);
             }
         });
     }
-
 
 
 
