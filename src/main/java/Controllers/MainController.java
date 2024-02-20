@@ -17,8 +17,6 @@ import java.io.*;
 import java.util.*;
 
 public class MainController {
-    //RangeSlider rangeSlider;
-
     private HashMap<Integer, HashMap> pillMap = new HashMap<>();
     private Image image;
     private ArrayList<int[]> pixelArray= new ArrayList<>();
@@ -27,12 +25,14 @@ public class MainController {
     private Image blackAndWhiteImage;
     private Image rebuild;
     private Image finalImage;
+    private Image finalImage2;
     private int x;
     private int y;
     private Rectangle rectangle1;
     private Rectangle rectangle2;
     Color selectedColour1;
     Color selectedColour2;
+
     @FXML
     TextField nameTextField = new TextField();
     @FXML
@@ -62,7 +62,13 @@ public class MainController {
     @FXML
     ImageView littleImageView5 = new ImageView();
     @FXML
+    ImageView littleImageView6 = new ImageView();
+    @FXML
     TabPane tabPane = new TabPane();
+    @FXML
+    Rectangle rectangleColour1 = new Rectangle();
+    @FXML
+    Rectangle rectangleColour2 = new Rectangle();
 
 
 
@@ -105,6 +111,9 @@ public class MainController {
         littleImageView5.setOnMouseClicked(mouseEvent -> {
             imageView.setImage(finalImage);
         });
+        littleImageView6.setOnMouseClicked(mouseEvent -> {
+            imageView.setImage(finalImage2);
+        });
 
         clickToGetColour();
 
@@ -139,33 +148,45 @@ public class MainController {
 
     }
     public void noiseReduction(){
-        int[] pixels = getPixels();
-        API.countUniqueSets(pixels);
-        rebuild = API.rebuildImage(pixels);
-        littleImageView4.setImage(rebuild);
-        imageView.setImage(rebuild);
+        if (getPixels()!=null){
+            int[] pixels = getPixels();
+            API.countUniqueSets(pixels);
+            rebuild = API.rebuildImage(pixels);
+            littleImageView4.setImage(rebuild);
+            imageView.setImage(rebuild);
+        }
     }
     public void locatePills(){
-        HashMap map = API.getSets(getPixels());
-        pillMap.putIfAbsent(count,map);
-        Pane pane = (Pane) imageView.getParent();
-        pane.getChildren().removeIf(node -> "pillRectangle".equals(node.getUserData()) || "pillLabel".equals(node.getUserData()));
-        drawLocatingRectangles(map,image);
-        imageView.setImage(image);
+        if (getPixels()!=null){
+            HashMap map = API.getSets(getPixels());
+            pillMap.putIfAbsent(count,map);
+            Pane pane = (Pane) imageView.getParent();
+            pane.getChildren().removeIf(node -> "pillRectangle".equals(node.getUserData()) || "pillLabel".equals(node.getUserData()));
+            drawLocatingRectangles(map,image);
+            imageView.setImage(image);
+            finalImage = API.colourSeparateSetsImage(image,map);
+            imageView.setImage(finalImage);
+            littleImageView5.setImage(finalImage);
+        }
+
     }
     private int[] getPixels(){
         int[] pixels = API.findWhite(blackAndWhiteImage);
-        pixels = API.unionFind(blackAndWhiteImage, pixels);
-        pixels = API.noiseFilter(pixels, (int) toleranceSlider.getValue());
-        pixelArray.add(pixels);
+        if (blackAndWhiteImage!=null){
+            pixels = API.unionFind(blackAndWhiteImage, pixels);
+            pixels = API.noiseFilter(pixels, (int) toleranceSlider.getValue());
+            pixelArray.add(pixels);
+        }
         return pixels;
     }
 
     public void addPills(){
-        if (pillMap!=null){
+        if (pillMap!=null && image!=null){
             LinkedList pills = pillList(image,pillMap.get(count),nameTextField.getText(), descriptionTextField.getText());
             addTab(String.valueOf(count), pills);
             count+=1;
+            finalImage2 = API.colourSampledSetsImage(image,pillMap);
+            littleImageView6.setImage(finalImage2);
         }
     }
 
@@ -174,16 +195,22 @@ public class MainController {
 
     private void clickToGetColour(){
         imageView.setOnMouseClicked(mouseEvent ->  {
+            processedImage = API.processedImage(image, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
+            littleImageView2.setImage(processedImage);
+            imageView.setImage(processedImage);
+
             if (mouseEvent.getButton() == MouseButton.PRIMARY){
                 x = (int) mouseEvent.getX();
                 y = (int) mouseEvent.getY();
                 System.out.println("X= " + x + ", Y= " + y);
-                selectedColour1 = image.getPixelReader().getColor(x,y);
+                selectedColour1 = processedImage.getPixelReader().getColor(x,y);
+                rectangleColour1.setFill(selectedColour1);
 
                 if (rectangle1 != null) {
                     ((Pane) imageView.getParent()).getChildren().remove(rectangle1);
                 }
                 rectangle1 = API.selectRectangle(imageView, x-5,y-5,x+5,y+5);
+                rectangle1.setUserData("colourLocation1");
                 ((Pane) imageView.getParent()).getChildren().add(rectangle1);
                 System.out.println(selectedColour1);
             }
@@ -191,18 +218,17 @@ public class MainController {
                 x = (int) mouseEvent.getX();
                 y = (int) mouseEvent.getY();
                 System.out.println("X= " + x + ", Y= " + y);
-                selectedColour2 = image.getPixelReader().getColor(x,y);
+                selectedColour2 = processedImage.getPixelReader().getColor(x,y);
+                rectangleColour2.setFill(selectedColour2);
 
                 if (rectangle2 != null) {
                     ((Pane) imageView.getParent()).getChildren().remove(rectangle2);
                 }
                 rectangle2 = API.selectRectangle(imageView, x-5,y-5,x+5,y+5);
+                rectangle2.setUserData("colourLocation2");
                 ((Pane) imageView.getParent()).getChildren().add(rectangle2);
                 System.out.println(selectedColour2);
             }
-            processedImage = API.processedImage(image, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
-            littleImageView2.setImage(processedImage);
-            imageView.setImage(processedImage);
 
         });
     }
@@ -210,6 +236,16 @@ public class MainController {
     private void resetImageView(){
         Pane pane = (Pane) imageView.getParent();
         pane.getChildren().removeIf(node -> "pillRectangle".equals(node.getUserData()) || "pillLabel".equals(node.getUserData()));
+        pane.getChildren().removeIf(node -> "colourLocation1".equals(node.getUserData()) || "colourLocation2".equals(node.getUserData()));
+        selectedColour1 = null;
+        selectedColour2 = null;
+        blueIntensitySlider.setValue(0);
+        redIntensitySlider.setValue(0);
+        greenIntensitySlider.setValue(0);
+        toleranceSlider.setValue(0);
+        toleranceColourSlider1.setValue(0);
+        toleranceColourSlider2.setValue(0);
+
     }
 
 

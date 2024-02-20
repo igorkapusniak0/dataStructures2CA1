@@ -60,14 +60,14 @@ public class API {
     }
 
     private static boolean matchesColour(Color color, Color targetColour, double tolerance) {
-        boolean hueDifference = Math.abs(targetColour.getHue() - color.getHue()) <= tolerance;
+       boolean hueDifference = Math.abs(targetColour.getHue() - color.getHue()) <= tolerance;
         boolean saturationDifference = Math.abs(targetColour.getSaturation() - color.getSaturation()) <= tolerance;
         boolean brightnessDifference = Math.abs(targetColour.getBrightness() - color.getBrightness()) <= tolerance;
         boolean redDifference = Math.abs(targetColour.getRed() - color.getRed()) <= tolerance;
         boolean greenDifference = Math.abs(targetColour.getGreen() - color.getGreen()) <= tolerance;
         boolean blueDifference = Math.abs(targetColour.getBlue() - color.getBlue()) <= tolerance;
 
-        return hueDifference && saturationDifference && brightnessDifference || redDifference && greenDifference && blueDifference;
+        return (hueDifference && saturationDifference && brightnessDifference) || (redDifference && greenDifference && blueDifference);
     }
 
 
@@ -171,31 +171,7 @@ public class API {
         }
         return writableImage;
     }
-    /*public static int[] mergePills(HashMap<Integer,HashMap> hashMap,Image image){
-        int size = (int) image.getHeight() * (int)image.getWidth();
-        int[] allPills = new int[size];
-        for (int i = 0; i<hashMap.size();i++){
-            HashMap<Integer,LinkedList> setMap = hashMap.get(i);
-            for (int ii = 0; ii<setMap.size(); ii++){
-                LinkedList<Integer> pillList = setMap.get(i);
-                for (int iii = 0; iii<pillList.size();iii++){
-                    allPills[pillList.get(iii)] = -1;
-                }
-            }
-        }
-        for ()
-    }*/
-   /* public static int[] mergeArrays(ArrayList<int[]> arrayList, Image image){
-        int size = (int) image.getHeight() * (int)image.getWidth();
-        int[] allPills = new int[size];
-        for (int i = 0; i<arrayList.size();i++) {
-            int[] pill = new int[arrayList.get(i).length];
-            for (int ii = 0; ii<pill.length;ii++){
-                allPills[ii] = pill[ii];
-            }
-        }
-        return allPills;
-    }*/
+
 
     public static int[] noiseFilter(int[] pixels, int tolerance) {
         for (int i = 0; i < pixels.length; i++){
@@ -215,6 +191,58 @@ public class API {
         return pixels;
 
     }
+
+    public static Image colourSeparateSetsImage(Image image, HashMap<Integer, LinkedList<Integer>> sets) {
+        int width = (int) image.getWidth();
+        int height = (int) image.getHeight();
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelWriter pixelWriter = writableImage.getPixelWriter();
+
+        HashMap<Integer, Color> colorMap = new HashMap<>();
+
+        Random rand = new Random();
+
+        for (Map.Entry<Integer, LinkedList<Integer>> list : sets.entrySet()) {
+            Color color = Color.rgb(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
+            colorMap.put(list.getKey(), color);
+
+            for (Integer pixelIndex : list.getValue()) {
+                int x = pixelIndex % width;
+                int y = pixelIndex / width;
+                pixelWriter.setColor(x, y, colorMap.get(list.getKey()));
+            }
+        }
+
+        return writableImage;
+    }
+
+    public static Image colourSampledSetsImage(Image image, HashMap<Integer, HashMap> sets) {
+        int width = (int) image.getWidth();
+        int height = (int) image.getHeight();
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelWriter pixelWriter = writableImage.getPixelWriter();
+
+        HashMap<Integer, Color> colorMap = new HashMap<>();
+        Random rand = new Random();
+
+        for (Map.Entry<Integer, HashMap> setEntry : sets.entrySet()) {
+            Color color = Color.rgb(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
+            colorMap.put(setEntry.getKey(), color);
+
+            HashMap<Integer, LinkedList<Integer>> innerMap = setEntry.getValue();
+            for (Map.Entry<Integer, LinkedList<Integer>> innerEntry : innerMap.entrySet()) {
+                LinkedList<Integer> pixelIndices = innerEntry.getValue();
+                for (Integer pixelIndex : pixelIndices) {
+                    int x = pixelIndex % width;
+                    int y = pixelIndex / width;
+                    pixelWriter.setColor(x, y, color);
+                }
+            }
+        }
+
+        return writableImage;
+    }
+
     public static int countUniqueSets(int[] pixels) {
         int number = 0;
         for (int i = 0; i < pixels.length; i++) {
