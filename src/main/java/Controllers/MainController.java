@@ -185,7 +185,7 @@ public class MainController {
             LinkedList pills = pillList(image,pillMap.get(count),nameTextField.getText(), descriptionTextField.getText());
             addTab(String.valueOf(count), pills);
             count+=1;
-            finalImage2 = API.colourSampledSetsImage(image,pillMap);
+            finalImage2 = API.colourSampledSetsImage(image,pillMap,selectedColour1);
             littleImageView6.setImage(finalImage2);
         }
     }
@@ -235,7 +235,7 @@ public class MainController {
     @FXML
     private void resetImageView(){
         Pane pane = (Pane) imageView.getParent();
-        pane.getChildren().removeIf(node -> "pillRectangle".equals(node.getUserData()) || "pillLabel".equals(node.getUserData()));
+        pane.getChildren().removeIf(node -> node instanceof Rectangle || node instanceof Label);
         pane.getChildren().removeIf(node -> "colourLocation1".equals(node.getUserData()) || "colourLocation2".equals(node.getUserData()));
         selectedColour1 = null;
         selectedColour2 = null;
@@ -298,6 +298,7 @@ public class MainController {
         int totalSize = height * width;
         int count = 0;
 
+        Pane pane = (Pane) imageView.getParent();
 
         for (Map.Entry<Integer, LinkedList<Integer>> entry : hashMap.entrySet()) {
             LinkedList<Integer> list = entry.getValue();
@@ -318,16 +319,23 @@ public class MainController {
                 if (y > maxY) maxY = y;
             }
             count+=1;
-            Rectangle rectangle = new Rectangle(minX+5, minY, maxX - minX+2, maxY - minY);
-            rectangle.setStroke(Color.RED);
-            rectangle.setFill(Color.TRANSPARENT);
-            rectangle.setUserData("pillRectangle");
-            ((Pane) imageView.getParent()).getChildren().add(rectangle);
             Label label = new Label("Pill: "+ count);
             label.setLayoutX(minX);
             label.setLayoutY(maxY);
-            label.setUserData("pillLabel");
+            label.setUserData(entry.getKey());
             ((Pane) imageView.getParent()).getChildren().add(label);
+            Rectangle rectangle = new Rectangle(minX+5, minY, maxX - minX+2, maxY - minY);
+            rectangle.setUserData(entry.getKey());
+            rectangle.setOnMouseClicked(mouseEvent -> {
+                System.out.println("del");
+                hashMap.remove(rectangle.getUserData());
+                pane.getChildren().remove(rectangle);
+                pane.getChildren().remove(label);
+
+            });
+            rectangle.setStroke(Color.RED);
+            rectangle.setFill(Color.TRANSPARENT);
+            ((Pane) imageView.getParent()).getChildren().add(rectangle);
         }
     }
 
@@ -361,7 +369,7 @@ public class MainController {
             if (newTab == tab) {
                 System.out.println(title);
                 Pane pane = (Pane) imageView.getParent();
-                pane.getChildren().removeIf(node -> "pillRectangle".equals(node.getUserData()) || "pillLabel".equals(node.getUserData()));
+                pane.getChildren().removeIf(node -> node instanceof Rectangle || node instanceof Label);
                 drawLocatingRectangles(pillMap.get(Integer.parseInt(title)), image);
             }
         });

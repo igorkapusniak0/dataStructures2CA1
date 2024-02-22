@@ -104,7 +104,7 @@ public class API {
         else if (a[id]<0) {
             return id;
         }else {
-            return find(a,a[id]);
+            return a[id]= find(a,a[id]);
         }
     }
 
@@ -216,18 +216,16 @@ public class API {
         return writableImage;
     }
 
-    public static Image colourSampledSetsImage(Image image, HashMap<Integer, HashMap> sets) {
+    public static Image colourSampledSetsImage(Image image, HashMap<Integer, HashMap> sets, Color colour) {
         int width = (int) image.getWidth();
         int height = (int) image.getHeight();
         WritableImage writableImage = new WritableImage(width, height);
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
         HashMap<Integer, Color> colorMap = new HashMap<>();
-        Random rand = new Random();
 
         for (Map.Entry<Integer, HashMap> setEntry : sets.entrySet()) {
-            Color color = Color.rgb(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
-            colorMap.put(setEntry.getKey(), color);
+            colorMap.put(setEntry.getKey(), colour);
 
             HashMap<Integer, LinkedList<Integer>> innerMap = setEntry.getValue();
             for (Map.Entry<Integer, LinkedList<Integer>> innerEntry : innerMap.entrySet()) {
@@ -235,7 +233,7 @@ public class API {
                 for (Integer pixelIndex : pixelIndices) {
                     int x = pixelIndex % width;
                     int y = pixelIndex / width;
-                    pixelWriter.setColor(x, y, color);
+                    pixelWriter.setColor(x, y, colour);
                 }
             }
         }
@@ -277,6 +275,11 @@ public class API {
         WritableImage writableImage = new WritableImage(width, height);
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
+        if (width <= 0 || height <= 0) {
+            System.err.println("Invalid sub-image dimensions: " + width + "x" + height);
+            return null;
+        }
+
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int pixel = pixelReader.getArgb(startX + x, startY + y);
@@ -295,12 +298,12 @@ public class API {
                 int down = i + width;
                 int right = i + 1;
 
-                System.out.println("i:" + i + "right:" + right);
+               // System.out.println("i:" + i + "right:" + right);
                 if (i % width < width - 1 && pixels[right] < pixels.length+1) {
                     API.unionBySize(pixels, i, right);
                 }
 
-                System.out.println("i:" + i + "down:" + down);
+                //System.out.println("i:" + i + "down:" + down);
                 if (down < pixels.length && pixels[down] < pixels.length+1) {
                     API.unionBySize(pixels, i, down);
                 }
