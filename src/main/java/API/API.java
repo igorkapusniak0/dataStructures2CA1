@@ -269,16 +269,15 @@ public class API {
         return store;
     }
     public static Image getSubImage(Image image, int startX, int startY, int endX, int endY) {
-        int width = endX - startX;
-        int height = endY - startY;
+        int width = (endX) - (startX);
+        int height = (endY) - (startY);
+        if (width <= 0 || height <= 0) {
+            return null;
+        }
         PixelReader pixelReader = image.getPixelReader();
         WritableImage writableImage = new WritableImage(width, height);
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
-        if (width <= 0 || height <= 0) {
-            System.err.println("Invalid sub-image dimensions: " + width + "x" + height);
-            return null;
-        }
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
