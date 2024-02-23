@@ -195,43 +195,46 @@ public class MainController {
 
     private void clickToGetColour(){
         imageView.setOnMouseClicked(mouseEvent ->  {
-            processedImage = API.processedImage(image, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
-            littleImageView2.setImage(processedImage);
-            imageView.setImage(processedImage);
+            if (image!=null){
+                processedImage = API.processedImage(image, redIntensitySlider, greenIntensitySlider, blueIntensitySlider);
+                littleImageView2.setImage(processedImage);
+                imageView.setImage(processedImage);
 
-            if (mouseEvent.getButton() == MouseButton.PRIMARY){
-                x = (int) mouseEvent.getX();
-                y = (int) mouseEvent.getY();
-                System.out.println("X= " + x + ", Y= " + y);
-                selectedColour1 = processedImage.getPixelReader().getColor(x,y);
-                rectangleColour1.setFill(selectedColour1);
+                if (mouseEvent.getButton() == MouseButton.PRIMARY){
+                    x = (int) mouseEvent.getX();
+                    y = (int) mouseEvent.getY();
+                    System.out.println("X= " + x + ", Y= " + y);
+                    selectedColour1 = processedImage.getPixelReader().getColor(x,y);
+                    rectangleColour1.setFill(selectedColour1);
 
-                if (rectangle1 != null) {
-                    ((Pane) imageView.getParent()).getChildren().remove(rectangle1);
+                    if (rectangle1 != null) {
+                        ((Pane) imageView.getParent()).getChildren().remove(rectangle1);
+                    }
+                    rectangle1 = API.selectRectangle(imageView, x-5,y-5,x+5,y+5);
+                    rectangle1.setUserData("colourLocation1");
+                    ((Pane) imageView.getParent()).getChildren().add(rectangle1);
+                    System.out.println(selectedColour1);
                 }
-                rectangle1 = API.selectRectangle(imageView, x-5,y-5,x+5,y+5);
-                rectangle1.setUserData("colourLocation1");
-                ((Pane) imageView.getParent()).getChildren().add(rectangle1);
-                System.out.println(selectedColour1);
-            }
-            if (mouseEvent.getButton() == MouseButton.SECONDARY){
-                x = (int) mouseEvent.getX();
-                y = (int) mouseEvent.getY();
-                System.out.println("X= " + x + ", Y= " + y);
-                selectedColour2 = processedImage.getPixelReader().getColor(x,y);
-                rectangleColour2.setFill(selectedColour2);
+                if (mouseEvent.getButton() == MouseButton.SECONDARY){
+                    x = (int) mouseEvent.getX();
+                    y = (int) mouseEvent.getY();
+                    System.out.println("X= " + x + ", Y= " + y);
+                    selectedColour2 = processedImage.getPixelReader().getColor(x,y);
+                    rectangleColour2.setFill(selectedColour2);
 
-                if (rectangle2 != null) {
-                    ((Pane) imageView.getParent()).getChildren().remove(rectangle2);
+                    if (rectangle2 != null) {
+                        ((Pane) imageView.getParent()).getChildren().remove(rectangle2);
+                    }
+                    rectangle2 = API.selectRectangle(imageView, x-5,y-5,x+5,y+5);
+                    rectangle2.setUserData("colourLocation2");
+                    ((Pane) imageView.getParent()).getChildren().add(rectangle2);
+                    System.out.println(selectedColour2);
                 }
-                rectangle2 = API.selectRectangle(imageView, x-5,y-5,x+5,y+5);
-                rectangle2.setUserData("colourLocation2");
-                ((Pane) imageView.getParent()).getChildren().add(rectangle2);
-                System.out.println(selectedColour2);
             }
-
         });
     }
+
+
     @FXML
     private void resetImageView(){
         Pane pane = (Pane) imageView.getParent();
