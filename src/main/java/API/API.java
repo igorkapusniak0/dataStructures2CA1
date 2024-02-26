@@ -110,7 +110,6 @@ public class API {
 
 
     public static void unionBySize(int[] a, int p, int q) {
-
         int rootp=find(a,p);
         int rootq=find(a,q);
 
@@ -123,20 +122,7 @@ public class API {
         a[smallerRoot]=biggerRoot;
 
     }
-    /*public static void unionBySize(int[] parent, int p, int q) {
-        int rootP = find(parent,p);
-        int rootQ = find(parent,q);
 
-        if (rootP == rootQ) return;
-
-        if (parent[rootP] < parent[rootQ]) {
-            parent[rootP] += parent[rootQ];
-            parent[rootQ] = rootP;
-        } else {
-            parent[rootQ] += parent[rootP];
-            parent[rootP] = rootQ;
-        }
-    }*/
 
 
 
@@ -268,8 +254,12 @@ public class API {
                 link.add(i);
             }
         }
+
         return store;
     }
+
+
+
     public static Image getSubImage(Image image, int startX, int startY, int endX, int endY) {
         int width = (endX) - (startX);
         int height = (endY) - (startY);

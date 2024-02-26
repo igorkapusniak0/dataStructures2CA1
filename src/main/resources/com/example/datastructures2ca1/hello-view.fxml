@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1400.0" style="-fx-border-color: black; -fx-border-width: 5;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.MainController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1400.0" style="-fx-border-color: black; -fx-border-width: 5;" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.MainController">
    <Button layoutX="659.0" layoutY="7.0" mnemonicParsing="false" onAction="#openImage" text="Open Image" />
    <HBox alignment="CENTER" layoutY="34.0" prefHeight="500.0" prefWidth="1400.0" spacing="30.0">
       <Pane prefHeight="510.0" prefWidth="510.0" style="-fx-border-color: black; -fx-border-width: 10;">
@@ -63,4 +63,5 @@
    <Button layoutX="663.0" layoutY="659.0" mnemonicParsing="false" onAction="#locatePills" text="Locate Pills" />
    <Button layoutX="678.0" layoutY="703.0" mnemonicParsing="false" onAction="#resetImageView" text="Reset" />
    <Button layoutX="783.0" layoutY="659.0" mnemonicParsing="false" onAction="#drawAllLocatingRectangles" text="Locate All Pills" />
+   <Label fx:id="totalPillsLabel" layoutX="637.0" layoutY="534.0" text="Total number of Pills: 0" />
 </AnchorPane>

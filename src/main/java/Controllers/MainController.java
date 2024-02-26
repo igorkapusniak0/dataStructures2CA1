@@ -69,6 +69,8 @@ public class MainController {
     Rectangle rectangleColour1 = new Rectangle();
     @FXML
     Rectangle rectangleColour2 = new Rectangle();
+    @FXML
+    Label totalPillsLabel = new Label();
 
 
 
@@ -167,6 +169,19 @@ public class MainController {
         return pixels;
     }
 
+    private int totalPills(){
+        int totalCount=0;
+        if (pillMap!=null){
+            for (Map.Entry<Integer, HashMap> pillTypes : pillMap.entrySet()){
+                HashMap<Integer, LinkedList<Integer>> pills = pillTypes.getValue();
+                for (Map.Entry<Integer, LinkedList<Integer>> pill : pills.entrySet()){
+                    totalCount+=1;
+                }
+            }
+        }
+        return totalCount;
+    }
+
     public void addPills(){
         if (pillMap!=null && image!=null){
             LinkedList pills = pillList(image,pillMap.get(count),nameTextField.getText(), descriptionTextField.getText());
@@ -174,7 +189,9 @@ public class MainController {
             count+=1;
             finalImage2 = API.colourSampledSetsImage(image,pillMap);
             littleImageView6.setImage(finalImage2);
+
         }
+        totalPillsLabel.setText("Total number of Pills: " + totalPills());
     }
 
 
@@ -290,7 +307,14 @@ public class MainController {
 
         Pane pane = (Pane) imageView.getParent();
 
-        for (Map.Entry<Integer, LinkedList<Integer>> entry : hashMap.entrySet()) {
+        List<Map.Entry<Integer, LinkedList<Integer>>> sortedEntries = new ArrayList<>(hashMap.entrySet());
+        sortedEntries.sort(Comparator.comparingInt(entry -> {
+            LinkedList<Integer> list = entry.getValue();
+            int minY = list.stream().mapToInt(pixelIndex -> pixelIndex / width).min().orElse(0);
+            return minY;
+        }));
+
+        for (Map.Entry<Integer, LinkedList<Integer>> entry : sortedEntries) {
             LinkedList<Integer> list = entry.getValue();
             if (list == null || list.isEmpty()) continue;
 
@@ -336,9 +360,15 @@ public class MainController {
         VBox vBox = new VBox();
         Label name = new Label("Name: "+pill.getName());
         Label description = new Label("Description: "+pill.getDescription());
+        Label pillNumber = new Label("Number of Pills: " + pills.size());
+        int totalCount = 0;
+        for (Pill pill1:pills){
+            totalCount+= pill1.getSize();
+        }
+        Label totalSize = new Label("Total Size of Pills: " + totalCount);
         Separator separator = new Separator();
         separator.setStyle("-fx-background-color: #ffffff; -fx-pref-width: 100px;-fx-pref-height: 3px;-fx-stroke-width: 3px;");
-        vBox.getChildren().addAll(name,description, separator);
+        vBox.getChildren().addAll(name, description, pillNumber, totalSize, separator);
         ScrollPane scrollPane = new ScrollPane();
         for (Pill pill1:pills){
             ImageView subImageView = new ImageView();
@@ -350,6 +380,7 @@ public class MainController {
             subImageView.setPreserveRatio(true);
             vBox.getChildren().addAll(index,size,subImageView);
         }
+
         vBox.setAlignment(Pos.TOP_CENTER);
         scrollPane.setContent(vBox);
 
