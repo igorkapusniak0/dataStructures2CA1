@@ -96,24 +96,12 @@ public class MainController {
                 littleImageView2.setImage(processedImage);
             }
         });
-        littleImageView1.setOnMouseClicked(mouseEvent -> {
-            imageView.setImage(image);
-        });
-        littleImageView2.setOnMouseClicked(mouseEvent -> {
-            imageView.setImage(processedImage);
-        });
-        littleImageView3.setOnMouseClicked(mouseEvent -> {
-            imageView.setImage(blackAndWhiteImage);
-        });
-        littleImageView4.setOnMouseClicked(mouseEvent -> {
-            imageView.setImage(rebuild);
-        });
-        littleImageView5.setOnMouseClicked(mouseEvent -> {
-            imageView.setImage(finalImage);
-        });
-        littleImageView6.setOnMouseClicked(mouseEvent -> {
-            imageView.setImage(finalImage2);
-        });
+        littleImageView1.setOnMouseClicked(mouseEvent -> imageView.setImage(image));
+        littleImageView2.setOnMouseClicked(mouseEvent -> imageView.setImage(processedImage));
+        littleImageView3.setOnMouseClicked(mouseEvent -> imageView.setImage(blackAndWhiteImage));
+        littleImageView4.setOnMouseClicked(mouseEvent -> imageView.setImage(rebuild));
+        littleImageView5.setOnMouseClicked(mouseEvent -> imageView.setImage(finalImage));
+        littleImageView6.setOnMouseClicked(mouseEvent -> imageView.setImage(finalImage2));
 
         clickToGetColour();
 
@@ -150,7 +138,6 @@ public class MainController {
     public void noiseReduction(){
         if (getPixels()!=null){
             int[] pixels = getPixels();
-            API.countUniqueSets(pixels);
             rebuild = API.rebuildImage(pixels);
             littleImageView4.setImage(rebuild);
             imageView.setImage(rebuild);
