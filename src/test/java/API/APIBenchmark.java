@@ -9,6 +9,9 @@ import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
+@Measurement(iterations=3)
+@Warmup(iterations=2)
+@Fork(value=1)
 @State(Scope.Benchmark)
 public class APIBenchmark {
     InputStream is = getClass().getResourceAsStream("/pillImage.png");

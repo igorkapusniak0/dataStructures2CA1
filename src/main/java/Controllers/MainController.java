@@ -185,7 +185,7 @@ public class MainController {
             LinkedList pills = pillList(image,pillMap.get(count),nameTextField.getText(), descriptionTextField.getText());
             addTab(String.valueOf(count), pills);
             count+=1;
-            finalImage2 = API.colourSampledSetsImage(image,pillMap,selectedColour1);
+            finalImage2 = API.colourSampledSetsImage(image,pillMap);
             littleImageView6.setImage(finalImage2);
         }
     }

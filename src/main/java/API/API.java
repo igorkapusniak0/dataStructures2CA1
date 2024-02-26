@@ -216,15 +216,17 @@ public class API {
         return writableImage;
     }
 
-    public static Image colourSampledSetsImage(Image image, HashMap<Integer, HashMap> sets, Color colour) {
+    public static Image colourSampledSetsImage(Image image, HashMap<Integer, HashMap> sets) {
         int width = (int) image.getWidth();
         int height = (int) image.getHeight();
         WritableImage writableImage = new WritableImage(width, height);
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
         HashMap<Integer, Color> colorMap = new HashMap<>();
+        Random rand = new Random();
 
         for (Map.Entry<Integer, HashMap> setEntry : sets.entrySet()) {
+            Color colour = Color.rgb(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
             colorMap.put(setEntry.getKey(), colour);
 
             HashMap<Integer, LinkedList<Integer>> innerMap = setEntry.getValue();
